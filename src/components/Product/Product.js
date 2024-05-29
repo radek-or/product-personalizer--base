@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styles from './Product.module.scss';
 import ProductImage from '../ProductImage/ProductImage';
@@ -7,12 +7,11 @@ import ProductForm from '../ProductForm/ProductForm';
 const Product = ({ name, title, basePrice, sizes, colors }) => {
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const [currentSize, setCurrentSize] = useState(sizes[0].name);
-  const [finalPrice, setFinalPrice] = useState(basePrice);
 
-  useEffect(() => {
+  // Użycie useMemo do obliczenia ceny
+  const price = useMemo(() => {
     const selectedSize = sizes.find(size => size.name === currentSize);
-    const newPrice = basePrice + selectedSize.additionalPrice;
-    setFinalPrice(newPrice);
+    return basePrice + selectedSize.additionalPrice;
   }, [currentSize, basePrice, sizes]);
 
   const handleSubmit = (e) => {
@@ -20,7 +19,7 @@ const Product = ({ name, title, basePrice, sizes, colors }) => {
     console.log(`Product: ${title}`);
     console.log(`Color: ${currentColor}`);
     console.log(`Size: ${currentSize}`);
-    console.log(`Price: ${finalPrice}$`);
+    console.log(`Price: ${price}$`);
   };
 
   return (
@@ -33,7 +32,7 @@ const Product = ({ name, title, basePrice, sizes, colors }) => {
       <div>
         <header>
           <h2 className={styles.name}>{title}</h2>
-          <span className={styles.price}>Price: {finalPrice}$</span>
+          <span className={styles.price}>Price: {price}$</span>
         </header>
         <ProductForm
           basePrice={basePrice}
